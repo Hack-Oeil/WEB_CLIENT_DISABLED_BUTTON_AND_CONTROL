@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Block Hacker !</title>
+  <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" />
+</head>
+<body>
+  <h1>Block Hacker ! <span class="score">0</span></h1>
+  <div class="align-center">
+    <button class="btn btn-primary" disabled id="startGame">Démarrer !</button>
+    <br />
+    <p class="info_flag">
+      Vous devez gagner au moins 10 points pour obtenir le flag<br />
+      Le flag est : <span id="flag"></span>
+    </p>    
+  </div>
+  <div class="game">
+    <div class="keyboard keyboard1"><div class="hacker"></div></div>
+    <div class="keyboard keyboard2"><div class="hacker"></div></div>
+    <div class="keyboard keyboard3"><div class="hacker"></div></div>
+    <div class="keyboard keyboard4"><div class="hacker"></div></div>
+    <div class="keyboard keyboard5"><div class="hacker"></div></div>
+    <div class="keyboard keyboard6"><div class="hacker"></div></div>
+  </div>
+  
+  <script>
+    const baseFlag = '2de19f0e9b9fd684fb7dc4f68eadba41e704cb58';
+    const keyboards=document.querySelectorAll('.keyboard');
+    const scoreBoard=document.querySelector('.score');
+    const hackers=document.querySelectorAll('.hacker');
+    const btnStart=document.querySelector('#startGame');
+    let lastkeyboard;
+    let timeUp=false;
+    let score=0;
+    let currentGame;
+    function randomTime(min,max){
+      return Math.round(Math.random()*(max-min)+min); 
+    }
+    function randomkeyboard(keyboards){
+      const idx=Math.floor(Math.random()*keyboards.length);
+      const keyboard=keyboards[idx];
+      if(keyboard===lastkeyboard) return randomkeyboard(keyboards);
+      lastkeyboard=keyboard;
+      return keyboard;
+    }
+    function peep(){
+      const time=randomTime(200, 1000);
+      const keyboard=randomkeyboard(keyboards);
+      keyboard.classList.add('up');
+      currentGame=window.setTimeout(()=>{
+        keyboard.classList.remove('up');
+        if(!timeUp) peep();
+      },time);    
+    }
+    function startGame() {     
+      document.querySelector("#flag").textContent="";
+      if(btnStart && btnStart.disabled != true){
+        window.clearTimeout(currentGame);
+        document.querySelectorAll('up').forEach(el => el.remove('up'));
+        scoreBoard.textContent=0;
+        timeUp=false;
+        score=0;
+        peep();
+        setTimeout(()=>timeUp=true,10000);
+      }
+      else{alert("Block Hacker n'est pas disponible pour le moment !");}
+    }
+    function bonk(e){
+      if(!e || !e.isTrusted){alert('Vous devez réussir à jouer à Block Hacker pour obtenir le flag !'); return;}
+      score++;
+      this.parentNode.classList.remove('up');
+      scoreBoard.textContent=score; 
+      if(btnStart && btnStart.disabled != true && score <= 10) {
+        baseFlag.split("").forEach((letter,index)=>{
+          if((index+1)%10===score || ((index+1)%10===0 && score===10))document.querySelector("#flag").textContent+=letter; 
+          if(score===10)document.querySelector("#flag").textContent=document.querySelector("#flag").textContent.split("").reverse().join(""); 
+        });
+      }
+    }
+    hackers.forEach(hacker => hacker.addEventListener('click',bonk));
+    document.addEventListener('DOMContentLoaded',()=>{
+      btnStart.addEventListener('click',()=>{
+        btnStart.disabled=true;
+        startGame();      
+      });
+    });
+  </script>
+</body>
+</html>
