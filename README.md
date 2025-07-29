@@ -2,7 +2,7 @@
 
 ## Présentation du CTF 
 **ID** 23 dans **les CTFs de Cyrhades**
-Réussissez le FLAG de validation en effectuant un score minimum de 10 points.
+Récupérez le FLAG de validation en effectuant un score minimum de 10 points.
 Dans ce challenge l'objectif est de contourner le fait que le bouton de démarrage soit désactivé, et contourner le contrôle.
 
 
